@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\GitHub\\crmCSharp\\CRMSharp\\CRMSharp.csproj",
+      "projectUniqueName": "D:\\GitHub\\crmCSharp\\CRMSharp.csproj",
       "projectName": "CRMSharp",
-      "projectPath": "D:\\GitHub\\crmCSharp\\CRMSharp\\CRMSharp.csproj",
+      "projectPath": "D:\\GitHub\\crmCSharp\\CRMSharp.csproj",
       "packagesPath": "C:\\Users\\Nekena\\.nuget\\packages\\",
-      "outputPath": "D:\\GitHub\\crmCSharp\\CRMSharp\\obj\\",
+      "outputPath": "D:\\GitHub\\crmCSharp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Nekena\\AppData\\Roaming\\NuGet\\NuGet.Config"
