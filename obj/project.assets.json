@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Nekena\\CRMC#\\CRMC#.csproj",
+      "projectUniqueName": "D:\\GitHub\\crmC-\\CRMC#.csproj",
       "projectName": "CRMC#",
-      "projectPath": "C:\\Users\\Nekena\\CRMC#\\CRMC#.csproj",
+      "projectPath": "D:\\GitHub\\crmC-\\CRMC#.csproj",
       "packagesPath": "C:\\Users\\Nekena\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Nekena\\CRMC#\\obj\\",
+      "outputPath": "D:\\GitHub\\crmC-\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Nekena\\AppData\\Roaming\\NuGet\\NuGet.Config"
