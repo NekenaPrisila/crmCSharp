@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CRMSharp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3094dce6d5ed8cb14b6f669b92bcb623585e1822")]
 [assembly: System.Reflection.AssemblyProductAttribute("CRMSharp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CRMSharp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
