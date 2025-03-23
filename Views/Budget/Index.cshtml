@@ -1,0 +1,13 @@
+@model BudgetAlert
+
+<h2>Configurer le taux d'alerte</h2>
+
+<p>Taux d'alerte actuel : @Model.AlertThreshold %</p>
+
+<form asp-action="Update" method="post">
+    <div class="form-group">
+        <label for="alertThreshold">Nouveau taux d'alerte (%)</label>
+        <input type="number" step="0.01" class="form-control" id="alertThreshold" name="alertThreshold" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+</form>
