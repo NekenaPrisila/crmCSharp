@@ -1,0 +1,34 @@
+@model CRMSharp.Models.TauxAlerte
+
+@{
+    ViewData["Title"] = "Créer un Taux d'Alerte";
+}
+
+<h2>Créer un Taux d'Alerte</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="CreateTaux" method="post">
+    <div class="form-group">
+        <label asp-for="Taux" class="control-label"></label>
+        <input asp-for="Taux" class="form-control" />
+        <span asp-validation-for="Taux" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DateChangement" class="control-label"></label>
+        <input asp-for="DateChangement" class="form-control" type="datetime-local" />
+        <span asp-validation-for="DateChangement" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Créer" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index" asp-controller="Home">Retour à l'accueil</a>
+</div>
