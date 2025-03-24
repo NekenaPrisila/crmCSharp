@@ -7,9 +7,6 @@
 <h1 class="display-4">Gestion des Tickets</h1>
 
 <div class="mt-4">
-    <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary mb-3">
-        <i class="fas fa-arrow-left"></i> Retour au Dashboard
-    </a>
     
     <table class="table table-striped">
         <thead>
@@ -43,11 +40,17 @@
                         </form>
                     </td>
                     <td>
-                        <button class="btn btn-warning btn-sm me-5" onclick="toggleEditForm(event)">
-                            <i class="fas fa-edit"></i>
+                        <!-- Bouton Modifier -->
+                        <button class="btn btn-outline-warning btn-sm me-2" onclick="toggleEditForm(event)" title="Modifier">
+                            <i class="fas fa-edit"></i> Modifier
                         </button>
-                        <a href="@Url.Action("DeleteTicket", "Dashboard", new { id = ticket.Id })" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
+                        
+                        <!-- Bouton Supprimer -->
+                        <a href="@Url.Action("DeleteTicket", "Dashboard", new { id = ticket.Id })" 
+                        class="btn btn-outline-danger btn-sm" 
+                        title="Supprimer"
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?');">
+                            <i class="fas fa-trash-alt"></i> Supprimer
                         </a>
                     </td>
                 </tr>
