@@ -14,6 +14,10 @@ public partial class Customer
 
     public List<Budget> BudgetList { get; set; }
 
+    public double Budget => BudgetList.Sum(budget => budget.TotalAmount);
+
+    public List<Expense> ExpenseList { get; set; }
+
     public double Expense => ExpenseList.Sum(expense => expense.Amount);
 
 }

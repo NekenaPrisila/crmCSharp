@@ -1,0 +1,112 @@
+@using CRMSharp.ViewModels
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<h1 class="display-4">Gestion des Tickets</h1>
+
+<div class="mt-4">
+    <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary mb-3">
+        <i class="fas fa-arrow-left"></i> Retour au Dashboard
+    </a>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Customer</th>
+                <th>Assigned Employee</th>
+                <th>Expense</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model.Tickets)
+            {
+                <tr>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.Subject</td>
+                    <td>@ticket.Priority</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.Customer</td>
+                    <td>@ticket.AssignedEmployee</td>
+                    <td>
+                        <span class="expense-value">@ticket.Expense</span>
+                        <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @ticket.Id, 'ticket')">
+                            <input type="number" class="form-control expense-input" value="@ticket.Expense" />
+                            <button type="submit" class="btn btn-success btn-sm mt-1">Enregistrer</button>
+                            <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="cancelEdit(event)">Annuler</button>
+                        </form>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-5" onclick="toggleEditForm(event)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <a href="@Url.Action("DeleteTicket", "Dashboard", new { id = ticket.Id })" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Fonction pour afficher/masquer le formulaire d'édition
+    function toggleEditForm(event) {
+        event.preventDefault();
+        const row = event.target.closest('tr');
+        const expenseValue = row.querySelector('.expense-value');
+        const expenseForm = row.querySelector('.expense-form');
+
+        expenseValue.style.display = 'none';
+        expenseForm.style.display = 'block';
+    }
+
+    // Fonction pour annuler l'édition
+    function cancelEdit(event) {
+        event.preventDefault();
+        const row = event.target.closest('tr');
+        const expenseValue = row.querySelector('.expense-value');
+        const expenseForm = row.querySelector('.expense-form');
+
+        expenseValue.style.display = 'inline';
+        expenseForm.style.display = 'none';
+    }
+
+    // Fonction pour mettre à jour l'expense via AJAX
+    async function updateExpense(event, id, type) {
+        event.preventDefault();
+        const form = event.target;
+        const expenseInput = form.querySelector('.expense-input');
+        const newExpense = expenseInput.value;
+
+        try {
+            const response = await fetch(`/Dashboard/Update${type}Expense`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, expense: newExpense }),
+            });
+
+            if (response.ok) {
+                const row = form.closest('tr');
+                const expenseValue = row.querySelector('.expense-value');
+                expenseValue.textContent = newExpense;
+                cancelEdit(event);
+                // Rafraîchir la page pour mettre à jour les totaux
+                window.location.reload();
+            } else {
+                alert('Erreur lors de la mise à jour.');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+</script>

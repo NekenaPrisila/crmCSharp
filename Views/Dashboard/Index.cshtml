@@ -16,43 +16,50 @@
     <div class="row">
         <!-- Tickets -->
         <div class="col-md-4">
-            <div class="card clickable-card" onclick="toggleSection('ticketDetails')">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title">Tickets</h5>
-                        <p class="card-text display-4">@Model.TotalTickets</p>
-                        <p class="card-text fw-bold fs-6">Expense Ticket Total : @Model.TotalExpenseTickets</p>
+            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none">
+                <div class="card clickable-card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Tickets</h5>
+                            <p class="card-text display-4">@Model.TotalTickets</p>
+                            <p class="card-text fw-bold fs-6">Expense Ticket Total : @Model.TotalExpenseTickets</p>
+                        </div>
+                        <i class="fas fa-ticket-alt fa-3x text-primary"></i>
                     </div>
-                    <i class="fas fa-ticket-alt fa-3x text-primary"></i>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Leads -->
         <div class="col-md-4">
-            <div class="card clickable-card" onclick="toggleSection('leadDetails')">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title">Leads</h5>
-                        <p class="card-text display-4">@Model.TotalLeads</p>
-                        <p class="card-text fw-bold fs-6">Expense Lead Total : @Model.TotalExpenseLeads</p>
+            <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none">
+                <div class="card clickable-card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Leads</h5>
+                            <p class="card-text display-4">@Model.TotalLeads</p>
+                            <p class="card-text fw-bold fs-6">Expense Lead Total : @Model.TotalExpenseLeads</p>
+                        </div>
+                        <i class="fas fa-user-plus fa-3x text-success"></i>
                     </div>
-                    <i class="fas fa-user-plus fa-3x text-success"></i>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Clients -->
         <div class="col-md-4">
-            <div class="card clickable-card" onclick="toggleSection('customerDetails')">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title">Clients</h5>
-                        <p class="card-text display-4">@Model.TotalCustomers</p>
+            <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none">
+                <div class="card clickable-card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Clients</h5>
+                            <p class="card-text display-4">@Model.TotalCustomers</p>
+                            <p class="card-text fw-bold fs-6">Total Budget Customers: @Model.TotalBudgetCustomers</p>
+                        </div>
+                        <i class="fas fa-users fa-3x text-warning"></i>
                     </div>
-                    <i class="fas fa-users fa-3x text-warning"></i>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>
@@ -76,204 +83,9 @@
     </div>
 </div>
 
-<!-- Section Détails -->
-<div class="mt-5">
-    <h3>Détails</h3>
-
-    <!-- Tickets -->
-    <div id="ticketDetails" class="mb-4 details-section" style="display: none;">
-        <h4>Tickets</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Subject</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Customer</th>
-                    <th>Assigned Employee</th>
-                    <th>Expense</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ticket in Model.Tickets)
-                {
-                    <tr>
-                        <td>@ticket.Id</td>
-                        <td>@ticket.Subject</td>
-                        <td>@ticket.Priority</td>
-                        <td>@ticket.Status</td>
-                        <td>@ticket.Customer</td>
-                        <td>@ticket.AssignedEmployee</td>
-                        <td>
-                            <span class="expense-value">@ticket.Expense</span>
-                            <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @ticket.Id, 'ticket')">
-                                <input type="number" class="form-control expense-input" value="@ticket.Expense" />
-                                <button type="submit" class="btn btn-success btn-sm mt-1">Enregistrer</button>
-                                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="cancelEdit(event)">Annuler</button>
-                            </form>
-                        </td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-5" onclick="toggleEditForm(event)">
-                                <i class="fas fa-edit"></i> <!-- Icône pour Modifier -->
-                            </button>
-                            <a href="@Url.Action("DeleteTicket", "Dashboard", new { id = ticket.Id })" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> <!-- Icône pour Supprimer -->
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Leads -->
-    <div id="leadDetails" class="mb-4 details-section" style="display: none;">
-        <h4>Leads</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Status</th>
-                    <th>Customer</th>
-                    <th>Assigned Employee</th>
-                    <th>CreatedAt</th>
-                    <th>Expense</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var lead in Model.Leads)
-                {
-                    <tr>
-                        <td>@lead.Id</td>
-                        <td>@lead.Status</td>
-                        <td>@lead.Customer</td>
-                        <td>@lead.AssignedEmployee</td>
-                        <td>@lead.CreatedAt</td>
-                        <td>
-                            <span class="expense-value">@lead.Expense</span>
-                            <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @lead.Id, 'lead')">
-                                <input type="number" class="form-control expense-input" value="@lead.Expense" />
-                                <button type="submit" class="btn btn-success btn-sm mt-1">Enregistrer</button>
-                                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="cancelEdit(event)">Annuler</button>
-                            </form>
-                        </td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-5" onclick="toggleEditForm(event)">
-                                <i class="fas fa-edit"></i> <!-- Icône pour Modifier -->
-                            </button>
-                            <a href="@Url.Action("DeleteLead", "Dashboard", new { id = lead.Id })" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> <!-- Icône pour Supprimer -->
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Clients -->
-    <div id="customerDetails" class="mb-4 details-section" style="display: none;">
-        <h4>Clients</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Country</th>
-                    <th>Address</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var customer in Model.Customers)
-                {
-                    <tr>
-                        <td>@customer.Id</td>
-                        <td>@customer.Name</td>
-                        <td>@customer.Email</td>
-                        <td>@customer.Phone</td>
-                        <td>@customer.Country</td>
-                        <td>@customer.Address</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Script pour les graphiques et la gestion des formulaires -->
+<!-- Script pour les graphiques -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Fonction pour afficher/masquer les sections de détails
-    function toggleSection(sectionId) {
-        // Masquer toutes les sections de détails
-        var sections = document.querySelectorAll('.details-section');
-        sections.forEach(function(section) {
-            section.style.display = "none";
-        });
-
-        // Afficher la section cliquée
-        var section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = "block";
-        }
-    }
-
-    // Fonction pour afficher/masquer le formulaire d'édition
-    function toggleEditForm(event) {
-        event.preventDefault();
-        const row = event.target.closest('tr');
-        const expenseValue = row.querySelector('.expense-value');
-        const expenseForm = row.querySelector('.expense-form');
-
-        expenseValue.style.display = 'none';
-        expenseForm.style.display = 'block';
-    }
-
-    // Fonction pour annuler l'édition
-    function cancelEdit(event) {
-        event.preventDefault();
-        const row = event.target.closest('tr');
-        const expenseValue = row.querySelector('.expense-value');
-        const expenseForm = row.querySelector('.expense-form');
-
-        expenseValue.style.display = 'inline';
-        expenseForm.style.display = 'none';
-    }
-
-    // Fonction pour mettre à jour l'expense via AJAX
-    async function updateExpense(event, id, type) {
-        event.preventDefault();
-        const form = event.target;
-        const expenseInput = form.querySelector('.expense-input');
-        const newExpense = expenseInput.value;
-
-        try {
-            const response = await fetch(`/Dashboard/Update${type}Expense`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id, expense: newExpense }),
-            });
-
-            if (response.ok) {
-                const row = form.closest('tr');
-                const expenseValue = row.querySelector('.expense-value');
-                expenseValue.textContent = newExpense;
-                cancelEdit(event);
-            } else {
-                alert('Erreur lors de la mise à jour.');
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
     // Graphique des Tickets
     var ticketCtx = document.getElementById('ticketChart').getContext('2d');
     var ticketChart = new Chart(ticketCtx, {
@@ -310,7 +122,7 @@
     // Graphique des Leads en Pie Chart
     var leadCtx = document.getElementById('leadChart').getContext('2d');
     var leadChart = new Chart(leadCtx, {
-        type: 'pie', // Changement du type de graphique
+        type: 'pie',
         data: {
             labels: @Html.Raw(Json.Serialize(Model.Leads.Select(l => l.Status))),
             datasets: [{
@@ -349,24 +161,33 @@
         }
     });
 
-    // Graphique des Clients
+    // Graphique des Clients - Doughnut Chart
     var customerCtx = document.getElementById('customerChart').getContext('2d');
     var customerChart = new Chart(customerCtx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
-            labels: ['Clients'],
+            labels: @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Name))),
             datasets: [{
-                label: 'Nombre de Clients',
-                data: [@Model.TotalCustomers],
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
+                data: @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Budget))),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)'
+                ],
                 borderWidth: 1
             }]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Répartition du budget par client'
+                },
+                legend: {
+                    position: 'right'
                 }
             }
         }
@@ -392,27 +213,5 @@
 
     .clickable-card:hover i {
         color: #0056b3;
-    }
-
-    .details-section {
-        margin-top: 20px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-    }
-
-    .expense-form {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .expense-form .form-control {
-        width: 100px;
-    }
-
-    .expense-form .btn {
-        padding: 5px 10px;
     }
 </style>

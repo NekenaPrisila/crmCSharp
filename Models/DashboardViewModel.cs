@@ -14,5 +14,8 @@ namespace CRMSharp.ViewModels
 
         public double TotalExpenseTickets { get; set; }
         public double TotalExpenseLeads { get; set; }
+
+        public double TotalBudgetCustomers { get; set; }
+        public double TotalExpenseCustomers { get; set; }
     }
 }
