@@ -3,3 +3,6 @@
 *.exe
 *.pdb
 *.editorconfig
+obj/Debug/net8.0/CRMSharp.AssemblyInfoInputs.cache
+obj/Debug/net8.0/CRMSharp.sourcelink.json
+obj/Debug/net8.0/CRMSharp.AssemblyInfo.cs
