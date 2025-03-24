@@ -21,6 +21,10 @@ public class DashboardController : Controller
         var leads = await _leadService.GetAllLeadsAsync();
         var customers = await _customerService.GetAllCustomersAsync();
 
+        // Calculer la somme totale des dépenses pour les tickets et les leads
+        double totalExpenseTickets = tickets.Sum(ticket => ticket.ExpenseList.Sum(exp => exp.Amount));
+        double totalExpenseLeads = leads.Sum(lead => lead.ExpenseList.Sum(exp => exp.Amount));
+
         // Créer le modèle avec les données récupérées
         var model = new DashboardViewModel
         {
@@ -29,7 +33,9 @@ public class DashboardController : Controller
             TotalCustomers = customers.Count, // Maintenant, customers est une List<Customer>
             Tickets = tickets,
             Leads = leads,
-            Customers = customers
+            Customers = customers,
+            TotalExpenseTickets = totalExpenseTickets,
+            TotalExpenseLeads = totalExpenseLeads
         };
 
         return View(model);
