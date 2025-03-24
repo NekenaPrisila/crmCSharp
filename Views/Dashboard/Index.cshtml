@@ -104,15 +104,16 @@
                         <td>@ticket.AssignedEmployee</td>
                         <td>
                             <span class="expense-value">@ticket.Expense</span>
-                            <input type="number" class="expense-input" value="@ticket.Expense" style="display: none;" data-ticket-id="@ticket.Id" />
+                            <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @ticket.Id, 'ticket')">
+                                <input type="number" class="form-control expense-input" value="@ticket.Expense" />
+                                <button type="submit" class="btn btn-success btn-sm mt-1">Enregistrer</button>
+                                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="cancelEdit(event)">Annuler</button>
+                            </form>
                         </td>
                         <td>
-                            <a href="#" class="btn btn-warning btn-sm me-5 edit-btn" data-ticket-id="@ticket.Id">
+                            <button class="btn btn-warning btn-sm me-5" onclick="toggleEditForm(event)">
                                 <i class="fas fa-edit"></i> <!-- Icône pour Modifier -->
-                            </a>
-                            <a href="#" class="btn btn-success btn-sm save-btn" data-ticket-id="@ticket.Id" style="display: none;">
-                                <i class="fas fa-save"></i> <!-- Icône pour Enregistrer -->
-                            </a>
+                            </button>
                             <a href="@Url.Action("DeleteTicket", "Dashboard", new { id = ticket.Id })" class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash"></i> <!-- Icône pour Supprimer -->
                             </a>
@@ -147,11 +148,18 @@
                         <td>@lead.Customer</td>
                         <td>@lead.AssignedEmployee</td>
                         <td>@lead.CreatedAt</td>
-                        <td>@lead.Expense</td>
                         <td>
-                            <a href="@Url.Action("EditLead", "Dashboard", new { id = lead.Id })" class="btn btn-warning btn-sm me-5">
+                            <span class="expense-value">@lead.Expense</span>
+                            <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @lead.Id, 'lead')">
+                                <input type="number" class="form-control expense-input" value="@lead.Expense" />
+                                <button type="submit" class="btn btn-success btn-sm mt-1">Enregistrer</button>
+                                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="cancelEdit(event)">Annuler</button>
+                            </form>
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-5" onclick="toggleEditForm(event)">
                                 <i class="fas fa-edit"></i> <!-- Icône pour Modifier -->
-                            </a>
+                            </button>
                             <a href="@Url.Action("DeleteLead", "Dashboard", new { id = lead.Id })" class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash"></i> <!-- Icône pour Supprimer -->
                             </a>
@@ -193,9 +201,75 @@
     </div>
 </div>
 
-<!-- Script pour les graphiques -->
+<!-- Script pour les graphiques et la gestion des formulaires -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Fonction pour afficher/masquer les sections de détails
+    function toggleSection(sectionId) {
+        // Masquer toutes les sections de détails
+        var sections = document.querySelectorAll('.details-section');
+        sections.forEach(function(section) {
+            section.style.display = "none";
+        });
+
+        // Afficher la section cliquée
+        var section = document.getElementById(sectionId);
+        if (section) {
+            section.style.display = "block";
+        }
+    }
+
+    // Fonction pour afficher/masquer le formulaire d'édition
+    function toggleEditForm(event) {
+        event.preventDefault();
+        const row = event.target.closest('tr');
+        const expenseValue = row.querySelector('.expense-value');
+        const expenseForm = row.querySelector('.expense-form');
+
+        expenseValue.style.display = 'none';
+        expenseForm.style.display = 'block';
+    }
+
+    // Fonction pour annuler l'édition
+    function cancelEdit(event) {
+        event.preventDefault();
+        const row = event.target.closest('tr');
+        const expenseValue = row.querySelector('.expense-value');
+        const expenseForm = row.querySelector('.expense-form');
+
+        expenseValue.style.display = 'inline';
+        expenseForm.style.display = 'none';
+    }
+
+    // Fonction pour mettre à jour l'expense via AJAX
+    async function updateExpense(event, id, type) {
+        event.preventDefault();
+        const form = event.target;
+        const expenseInput = form.querySelector('.expense-input');
+        const newExpense = expenseInput.value;
+
+        try {
+            const response = await fetch(`/Dashboard/Update${type}Expense`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, expense: newExpense }),
+            });
+
+            if (response.ok) {
+                const row = form.closest('tr');
+                const expenseValue = row.querySelector('.expense-value');
+                expenseValue.textContent = newExpense;
+                cancelEdit(event);
+            } else {
+                alert('Erreur lors de la mise à jour.');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
     // Graphique des Tickets
     var ticketCtx = document.getElementById('ticketChart').getContext('2d');
     var ticketChart = new Chart(ticketCtx, {
@@ -284,82 +358,6 @@
             }
         }
     });
-
-    // Fonction pour basculer entre les sections de détails
-    function toggleSection(sectionId) {
-        var sections = document.querySelectorAll('.details-section');
-        sections.forEach(function(section) {
-            section.style.display = "none";
-        });
-
-        var section = document.getElementById(sectionId);
-        if (section.style.display === "none") {
-            section.style.display = "block";
-        } else {
-            section.style.display = "none";
-        }
-    }
-
-    // Gestion de la modification des dépenses
-    document.addEventListener('DOMContentLoaded', function () {
-        // Gestion du clic sur le bouton "Modifier"
-        document.querySelectorAll('.edit-btn').forEach(function (editBtn) {
-            editBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                var ticketId = this.getAttribute('data-ticket-id');
-                var expenseValue = document.querySelector('.expense-value[data-ticket-id="' + ticketId + '"]');
-                var expenseInput = document.querySelector('.expense-input[data-ticket-id="' + ticketId + '"]');
-                var saveBtn = document.querySelector('.save-btn[data-ticket-id="' + ticketId + '"]');
-
-                // Basculer entre l'affichage du texte et l'affichage du champ de saisie
-                expenseValue.style.display = 'none';
-                expenseInput.style.display = 'inline-block';
-                saveBtn.style.display = 'inline-block';
-                this.style.display = 'none';
-            });
-        });
-
-        // Gestion du clic sur le bouton "Enregistrer"
-        document.querySelectorAll('.save-btn').forEach(function (saveBtn) {
-            saveBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                var ticketId = this.getAttribute('data-ticket-id');
-                var expenseInput = document.querySelector('.expense-input[data-ticket-id="' + ticketId + '"]');
-                var newExpense = expenseInput.value;
-
-                // Envoyer les données mises à jour via AJAX
-                fetch('@Url.Action("UpdateTicketExpense", "Dashboard")', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        id: ticketId,
-                        expense: newExpense
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Mettre à jour l'affichage du montant de la dépense
-                        var expenseValue = document.querySelector('.expense-value[data-ticket-id="' + ticketId + '"]');
-                        expenseValue.textContent = newExpense;
-
-                        // Masquer le champ de saisie et le bouton "Enregistrer"
-                        expenseInput.style.display = 'none';
-                        saveBtn.style.display = 'none';
-                        document.querySelector('.edit-btn[data-ticket-id="' + ticketId + '"]').style.display = 'inline-block';
-                    } else {
-                        alert('Erreur lors de la mise à jour de la dépense.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                });
-            });
-        });
-    });
 </script>
 
 <style>
@@ -391,14 +389,17 @@
         background-color: #f9f9f9;
     }
 
-    .expense-input {
-        width: 80px;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+    .expense-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .save-btn {
-        display: none;
+    .expense-form .form-control {
+        width: 100px;
+    }
+
+    .expense-form .btn {
+        padding: 5px 10px;
     }
 </style>

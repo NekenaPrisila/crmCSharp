@@ -69,4 +69,34 @@ public class DashboardController : Controller
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> UpdateTicketExpense([FromBody] UpdateExpenseRequest request)
+    {
+        var success = await _ticketService.UpdateTicketExpenseAsync(request.Id, request.Expense);
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateLeadExpense([FromBody] UpdateExpenseRequest request)
+    {
+        var success = await _leadService.UpdateLeadExpenseAsync(request.Id, request.Expense);
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return Ok();
+    }
+
+    public class UpdateExpenseRequest
+    {
+        public int Id { get; set; }
+        public decimal Expense { get; set; }
+    }
+
 }
