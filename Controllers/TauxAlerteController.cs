@@ -26,7 +26,7 @@ public class TauxAlerteController : Controller
             if (result)
             {
                 TempData["SuccessMessage"] = "Taux d'alerte créé avec succès !";
-                return RedirectToAction("Index", "Home"); // Rediriger vers la page d'accueil
+                return RedirectToAction("Index", "Dashboard"); // Rediriger vers la page d'accueil
             }
             else
             {

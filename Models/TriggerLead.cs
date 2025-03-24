@@ -10,6 +10,9 @@ public partial class TriggerLead
     public string Customer { get; set; }
     public string AssignedEmployee { get; set; }
     public DateTime CreatedAt { get; set; }
-    public double Expense { get; set; }
+    public List<Expense> ExpenseList { get; set; }
+
+    public double Expense => ExpenseList.Sum(expense => expense.Amount);
+
 
 }

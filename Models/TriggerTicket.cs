@@ -11,5 +11,7 @@ public partial class TriggerTicket
         public string Status { get; set; }
         public string Customer { get; set; }
         public string AssignedEmployee { get; set; }
-        public double Expense { get; set; }
+        public List<Expense> ExpenseList { get; set; }
+
+        public double Expense => ExpenseList.Sum(expense => expense.Amount);
 }
