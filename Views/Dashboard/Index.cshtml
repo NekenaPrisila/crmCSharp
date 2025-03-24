@@ -21,12 +21,13 @@
                     <div>
                         <h5 class="card-title">Tickets</h5>
                         <p class="card-text display-4">@Model.TotalTickets</p>
-                        <p class="card-text display-4">@Model.TotalExpenseTickets</p>
+                        <p class="card-text fw-bold fs-6">Expense Ticket Total : @Model.TotalExpenseTickets</p>
                     </div>
                     <i class="fas fa-ticket-alt fa-3x text-primary"></i>
                 </div>
             </div>
         </div>
+
         <!-- Leads -->
         <div class="col-md-4">
             <div class="card clickable-card" onclick="toggleSection('leadDetails')">
@@ -34,12 +35,13 @@
                     <div>
                         <h5 class="card-title">Leads</h5>
                         <p class="card-text display-4">@Model.TotalLeads</p>
-                        <p class="card-text display-4">@Model.TotalExpenseLeads</p>
+                        <p class="card-text fw-bold fs-6">Expense Lead Total : @Model.TotalExpenseLeads</p>
                     </div>
                     <i class="fas fa-user-plus fa-3x text-success"></i>
                 </div>
             </div>
         </div>
+
         <!-- Clients -->
         <div class="col-md-4">
             <div class="card clickable-card" onclick="toggleSection('customerDetails')">
