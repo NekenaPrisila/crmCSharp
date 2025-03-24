@@ -1,0 +1,40 @@
+@using CRMSharp.ViewModels
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<h1 class="display-4">Gestion des Clients</h1>
+
+<div class="mt-4">
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Country</th>
+                <th>Address</th>
+                <th>Budgets</th>
+                <th>Depenses</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model.Customers)
+            {
+                <tr>
+                    <td>@customer.Id</td>
+                    <td>@customer.Name</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                    <td>@customer.Country</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.Budget</td>
+                    <td>@customer.Expense</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
