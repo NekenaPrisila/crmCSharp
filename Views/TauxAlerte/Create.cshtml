@@ -4,21 +4,23 @@
     ViewData["Title"] = "Créer un Taux d'Alerte";
 }
 
-<h2>Créer un Taux d'Alerte</h2>
-
-<form asp-action="CreateTaux" method="post">
-    <div class="form-group">
-        <label asp-for="Taux" class="control-label"></label>
-        <input asp-for="Taux" class="form-control" />
-        <span asp-validation-for="Taux" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="DateChangement" class="control-label"></label>
-        <input asp-for="DateChangement" class="form-control" type="datetime-local" />
-        <span asp-validation-for="DateChangement" class="text-danger"></span>
-    </div>
-    <br>
-    <div class="form-group">
-        <input type="submit" value="Créer" class="btn btn-primary" />
-    </div>
-</form>
+<div class="container">
+    <h2>Créer un Taux d'Alerte</h2>
+    <form asp-action="CreateTaux" method="post" style="max-width: 500px;">
+        <div class="form-group">
+            <label asp-for="Taux" class="control-label"></label>
+            <input asp-for="Taux" class="form-control" />
+            <span asp-validation-for="Taux" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group">
+            <label asp-for="DateChangement" class="control-label"></label>
+            <input asp-for="DateChangement" class="form-control" type="datetime-local" />
+            <span asp-validation-for="DateChangement" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group">
+            <input type="submit" value="Créer" class="btn btn-primary" />
+        </div>
+    </form>
+</div>

@@ -9,8 +9,17 @@ builder.Services.AddScoped<LeadService>();
 
 builder.Services.AddScoped<CustomerService>();
 
+builder.Services.AddScoped<LoginService>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Durée de vie de la session
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -22,6 +31,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSession();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -31,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();

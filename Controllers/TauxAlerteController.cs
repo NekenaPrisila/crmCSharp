@@ -13,26 +13,43 @@ public class TauxAlerteController : Controller
     // Afficher le formulaire de création
     public IActionResult Create()
     {
-        return View();
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }else{
+            return View("");
+        }
     }
 
     // Traiter la soumission du formulaire
     [HttpPost]
     public async Task<IActionResult> CreateTaux(TauxAlerte tauxAlerte)
     {
-        if (ModelState.IsValid)
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
         {
-            bool result = await _tauxAlerteService.CreateTauxAlerteAsync(tauxAlerte);
-            if (result)
-            {
-                TempData["SuccessMessage"] = "Taux d'alerte créé avec succès !";
-                return RedirectToAction("Index", "Dashboard"); // Rediriger vers la page d'accueil
-            }
-            else
-            {
-                ModelState.AddModelError("", "Erreur lors de la création du taux d'alerte.");
-            }
+            return RedirectToAction("Index", "Login");
         }
-        return View(tauxAlerte);
+
+        else{
+            if (ModelState.IsValid)
+            {
+                bool result = await _tauxAlerteService.CreateTauxAlerteAsync(tauxAlerte);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Taux d'alerte créé avec succès !";
+                    return RedirectToAction("Index", "Dashboard"); // Rediriger vers la page d'accueil
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Erreur lors de la création du taux d'alerte.");
+                }
+            }
+            return View(tauxAlerte);
+        }
     }
 }

@@ -1,0 +1,53 @@
+@model LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Connexion";
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CRMSharp</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center min-vh-100">
+    <div class="container">
+        <div class="card shadow-lg" style="max-width: 500px; margin: 0 auto;">
+            <div class="card-header bg-white border-bottom text-center py-3">
+                <h2 class="mb-0 text-dark">@ViewData["Title"]</h2>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-action="Login">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+                    
+                    <div class="mb-4">
+                        <label asp-for="Input.Email" class="form-label fw-semibold">Email professionnel</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input asp-for="Input.Email" class="form-control form-control-lg" 
+                                   placeholder="exemple@votresociete.com" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg py-2">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Connexion
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

@@ -45,6 +45,15 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> Index()
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+        
+        ViewBag.UserEmail = userEmail;
         var model = await GetDashboardViewModelAsync();
         return View(model);
     }
