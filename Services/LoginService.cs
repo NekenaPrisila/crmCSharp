@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 using CRMSharp.Models;
 
@@ -19,12 +20,13 @@ public class LoginService
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("check-login", email);
+            var content = new StringContent(email, Encoding.UTF8, "text/plain");
+            var response = await _httpClient.PostAsync("check-login", content);
             response.EnsureSuccessStatusCode(); // Lève une exception si le statut n'est pas 2xx
             // Désérialiser la réponse en booléen
-            var responseContent = await response.Content.ReadFromJsonAsync<bool>();
-            Console.WriteLine(responseContent);
-            return responseContent;
+            var responseString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseString);
+            return bool.Parse(responseString.Trim());
         }
         catch (HttpRequestException)
         {
