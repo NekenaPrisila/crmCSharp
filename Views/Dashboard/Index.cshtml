@@ -13,51 +13,69 @@
 
 <div class="mt-5">
     <h3>Totaux</h3>
-    <div class="row">
+    <div class="row row-eq-height">
         <!-- Tickets -->
-        <div class="col-md-4">
-            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none text-body">
-                <div class="card clickable-card">
-                    <div class="card-body d-flex justify-content-between align-items-center">
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none text-body w-100">
+                <div class="card clickable-card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <div>
                             <h5 class="card-title text-primary">Tickets</h5>
                             <p class="card-text display-4">@Model.TotalTickets</p>
-                            <p class="card-text fw-bold fs-6">Expense Ticket Total : @Model.TotalExpenseTickets.ToString("0.00") </p>
+                            <div class="d-flex align-items-baseline">
+                                <span class="fw-bold fs-6 me-2">Expense Ticket Total :</span>
+                                <span class="fs-5 fw-bold text-primary">@Model.TotalExpenseTickets.ToString("0.00")</span>
+                            </div>
                         </div>
-                        <i class="fas fa-ticket-alt fa-3x text-primary"></i>
+                        <div class="text-end">
+                            <i class="fas fa-ticket-alt fa-3x text-primary"></i>
+                        </div>
                     </div>
                 </div>
             </a>
         </div>
 
         <!-- Leads -->
-        <div class="col-md-4">
-            <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none text-body">
-                <div class="card clickable-card">
-                    <div class="card-body d-flex justify-content-between align-items-center">
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none text-body w-100">
+                <div class="card clickable-card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <div>
                             <h5 class="card-title text-success">Leads</h5>
                             <p class="card-text display-4">@Model.TotalLeads</p>
-                            <p class="card-text fw-bold fs-6">Expense Lead Total : @Model.TotalExpenseLeads.ToString("0.00") </p>
+                            <div class="d-flex align-items-baseline">
+                                <span class="fw-bold fs-6 me-2">Expense Lead Total :</span>
+                                <span class="fs-5 fw-bold text-success">@Model.TotalExpenseLeads.ToString("0.00")</span>
+                            </div>
                         </div>
-                        <i class="fas fa-user-plus fa-3x text-success"></i>
+                        <div class="text-end">
+                            <i class="fas fa-user-plus fa-3x text-success"></i>
+                        </div>
                     </div>
                 </div>
             </a>
         </div>
 
         <!-- Clients -->
-        <div class="col-md-4">
-            <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none text-body">
-                <div class="card clickable-card">
-                    <div class="card-body d-flex justify-content-between align-items-center">
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none text-body w-100">
+                <div class="card clickable-card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <div>
                             <h5 class="card-title text-warning">Clients</h5>
                             <p class="card-text display-4">@Model.TotalCustomers</p>
-                            <p class="card-text fw-bold fs-6">Total Budget Customers: @Model.TotalBudgetCustomers.ToString("0.00") </p>
-                            <p class="card-text fw-bold fs-6">Total expense Customers: @Model.TotalExpenseCustomers.ToString("0.00") </p>
+                            <div class="d-flex align-items-baseline">
+                                <span class="fw-bold fs-6 me-2">Total Budget Customers:</span>
+                                <span class="fs-5 fw-bold text-warning">@Model.TotalBudgetCustomers.ToString("0.00")</span>
+                            </div>
+                            <div class="d-flex align-items-baseline mt-2">
+                                <span class="fw-bold fs-6 me-2">Total expense Customers:</span>
+                                <span class="fs-5 fw-bold text-warning">@Model.TotalExpenseCustomers.ToString("0.00")</span>
+                            </div>
                         </div>
-                        <i class="fas fa-users fa-3x text-warning"></i>
+                        <div class="text-end">
+                            <i class="fas fa-users fa-3x text-warning"></i>
+                        </div>
                     </div>
                 </div>
             </a>
@@ -305,5 +323,35 @@
 
     .clickable-card:hover i {
         color: #333435;
+    }
+</style>
+
+<style>
+    .row-eq-height {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .row-eq-height > [class*='col-'] {
+        display: flex;
+    }
+    .clickable-card {
+        transition: all 0.3s ease;
+    }
+    .clickable-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    /* Taille des polices */
+    .card-title {
+        font-size: 1.2rem;
+    }
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    .fs-5 {
+        font-size: 1.1rem;
+    }
+    .fs-6 {
+        font-size: 0.9rem;
     }
 </style>
