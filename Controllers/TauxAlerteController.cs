@@ -19,7 +19,7 @@ public class TauxAlerteController : Controller
         {
             return RedirectToAction("Index", "Login");
         }else{
-            return View("");
+            return View();
         }
     }
 
