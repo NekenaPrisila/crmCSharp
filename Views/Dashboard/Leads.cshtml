@@ -32,7 +32,8 @@
                     <td>
                         <span class="expense-value">@lead.Expense</span>
                         <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @lead.Id, 'lead')">
-                            <input type="number" class="form-control expense-input" value="@lead.Expense" />
+                            <input type="number" step="0.01" class="form-control expense-input" 
+                                value="@lead.Expense.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                             <button type="submit" class="btn btn-success btn-sm mt-1">Enregistrer</button>
                             <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="cancelEdit(event)">Annuler</button>
                         </form>
