@@ -60,24 +60,53 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> Tickets()
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
         var model = await GetDashboardViewModelAsync();
         return View(model);
     }
 
     public async Task<IActionResult> Leads()
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
         var model = await GetDashboardViewModelAsync();
         return View(model);
     }
 
     public async Task<IActionResult> Customers()
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
         var model = await GetDashboardViewModelAsync();
         return View(model);
     }
 
     public async Task<IActionResult> DeleteTicket(int id)
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var result = await _ticketService.DeleteTicketAsync(id);
         
         if (result)
@@ -95,6 +124,14 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> DeleteLead(int id)
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var result = await _leadService.DeleteLeadAsync(id);
         
         if (result)
@@ -113,6 +150,14 @@ public class DashboardController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateTicketExpense([FromBody] UpdateExpenseRequest request)
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var success = await _ticketService.UpdateTicketExpenseAsync(request.Id, request.Expense);
         if (!success)
         {
@@ -125,6 +170,14 @@ public class DashboardController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateLeadExpense([FromBody] UpdateExpenseRequest request)
     {
+        // Récupérer l'email depuis la session
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var success = await _leadService.UpdateLeadExpenseAsync(request.Id, request.Expense);
         if (!success)
         {
