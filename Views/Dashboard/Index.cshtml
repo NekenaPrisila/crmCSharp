@@ -55,6 +55,7 @@
                             <h5 class="card-title text-warning">Clients</h5> <!-- Jaune comme l'icône -->
                             <p class="card-text display-4">@Model.TotalCustomers</p>
                             <p class="card-text fw-bold fs-6">Total Budget Customers: @Model.TotalBudgetCustomers</p>
+                            <p class="card-text fw-bold fs-6">Total expense Customers: @Model.TotalExpenseCustomers</p>
                         </div>
                         <i class="fas fa-users fa-3x text-warning"></i>
                     </div>
@@ -70,15 +71,15 @@
     <div class="row">
         <!-- Graphique des Tickets -->
         <div class="col-md-4">
-            <canvas id="ticketChart" width="600" height="600"></canvas>
+            <canvas id="ticketLeadChart" width="600" height="600"></canvas>
         </div>
         <!-- Graphique des Leads -->
         <div class="col-md-4">
-            <canvas id="leadChart" width="600" height="300"></canvas>
+            <canvas id="depenceCustomerChart" width="600" height="300"></canvas>
         </div>
         <!-- Graphique des Clients -->
         <div class="col-md-4">
-            <canvas id="customerChart" width="600" height="600"></canvas>
+            <canvas id="budgetCustomerChart" width="600" height="600"></canvas>
         </div>
     </div>
 </div>
@@ -86,109 +87,200 @@
 <!-- Script pour les graphiques -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Graphique des Tickets
-    var ticketCtx = document.getElementById('ticketChart').getContext('2d');
-    var ticketChart = new Chart(ticketCtx, {
-        type: 'bar',
-        data: {
-            labels: @Html.Raw(Json.Serialize(Model.Tickets.Select(t => t.Subject))),
-            datasets: [{
-                label: 'Dépenses par Ticket',
-                data: @Html.Raw(Json.Serialize(Model.Tickets.Select(t => t.Expense))),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
+
+    // Fonction pour générer des couleurs dynamiques en fonction du nombre de clients
+    function generateDynamicColors(count) {
+        var colors = [];
+        var hueStep = 360 / count; // Répartition uniforme des teintes
+        
+        for (var i = 0; i < count; i++) {
+            var hue = Math.floor(hueStep * i);
+            // Couleurs HSL pour une meilleure variété visuelle
+            colors.push(`hsla(${hue}, 70%, 60%, 0.7)`); // Version claire
+        }
+        return colors;
+    }
+
+    // 1. Graphique Comparaison Leads/Tickets (Bar Chart)
+    new Chart(
+        document.getElementById('ticketLeadChart').getContext('2d'),
+        {
+            type: 'bar',
+            data: {
+                labels: ['Leads', 'Tickets'],
+                datasets: [{
+                    label: 'Montant en €',
+                    data: [
+                        parseFloat(@Model.TotalExpenseLeads).toFixed(2),
+                        parseFloat(@Model.TotalExpenseTickets).toFixed(2)
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Dépenses (€)'
+                        text: 'Dépenses Leads vs Tickets',
+                        font: { size: 16 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.raw} €`
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: value => `${parseFloat(value).toFixed(2)} €`,
+                        font: { weight: 'bold' }
                     }
                 },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Tickets'
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => `${value} €`
+                        }
                     }
                 }
             }
         }
-    });
+    );
 
-    // Graphique des Leads en Pie Chart
-    var leadCtx = document.getElementById('leadChart').getContext('2d');
-    var leadChart = new Chart(leadCtx, {
-        type: 'pie',
+    // 2ème Graphique - Dépenses par client (Pie Chart)
+    var customerExpense = document.getElementById('depenceCustomerChart').getContext('2d');
+
+    // Fonction pour générer des couleurs dynamiques
+    function generateDynamicColors(count) {
+        var colors = [];
+        var hueStep = 360 / count;
+        for (var i = 0; i < count; i++) {
+            colors.push(`hsla(${Math.floor(hueStep * i)}, 70%, 60%, 0.7)`);
+        }
+        return colors;
+    }
+
+    var customerData = @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Expense)));
+    var customerLabels = @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Name)));
+
+    var customerChart = new Chart(customerExpense, {
+        type: 'pie', // Changé de doughnut à pie
         data: {
-            labels: @Html.Raw(Json.Serialize(Model.Leads.Select(l => l.Status))),
+            labels: customerLabels,
             datasets: [{
-                label: 'Dépenses par Lead',
-                data: @Html.Raw(Json.Serialize(Model.Leads.Select(l => l.Expense))),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+                data: customerData,
+                backgroundColor: generateDynamicColors(customerData.length),
+                borderColor: 'rgba(255, 255, 255, 0.8)',
+                borderWidth: 2,
+                hoverOffset: 10
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'top',
-                },
                 title: {
                     display: true,
-                    text: 'Dépenses par Lead'
+                    text: 'Répartition des dépenses par client',
+                    font: {
+                        size: 16
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
                 }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
             }
         }
     });
 
-    // Graphique des Clients - Doughnut Chart
-    var customerCtx = document.getElementById('customerChart').getContext('2d');
+
+    // Graphique des Clients - Doughnut Chart avec couleurs dynamiques
+    var customerCtx = document.getElementById('budgetCustomerChart').getContext('2d');
+
+    // Données des clients
+    var customerData = @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Budget)));
+    var customerLabels = @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Name)));
+
     var customerChart = new Chart(customerCtx, {
         type: 'doughnut',
         data: {
-            labels: @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Name))),
+            labels: customerLabels,
             datasets: [{
-                data: @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.Budget))),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.7)',
-                    'rgba(54, 162, 235, 0.7)',
-                    'rgba(255, 206, 86, 0.7)',
-                    'rgba(75, 192, 192, 0.7)',
-                    'rgba(153, 102, 255, 0.7)'
-                ],
-                borderWidth: 1
+                data: customerData,
+                backgroundColor: generateDynamicColors(customerData.length),
+                borderColor: 'rgba(255, 255, 255, 0.8)', // Bordure blanche pour meilleur contraste
+                borderWidth: 2,
+                hoverOffset: 10 // Effet de survol
             }]
         },
         options: {
             responsive: true,
+            cutout: '65%', // Contrôle l'épaisseur du donut
             plugins: {
                 title: {
                     display: true,
-                    text: 'Répartition du budget par client'
+                    text: 'Répartition du budget par client',
+                    font: {
+                        size: 16
+                    }
                 },
                 legend: {
-                    position: 'right'
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            var label = context.label || '';
+                            var value = context.raw || 0;
+                            var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            var percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
                 }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
             }
         }
     });

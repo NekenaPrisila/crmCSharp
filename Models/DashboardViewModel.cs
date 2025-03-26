@@ -11,7 +11,6 @@ namespace CRMSharp.ViewModels
         public List<TriggerTicket>? Tickets { get; set; }
         public List<TriggerLead>? Leads { get; set; }
         public List<Customer>? Customers { get; set; }
-
         public double TotalExpenseTickets { get; set; }
         public double TotalExpenseLeads { get; set; }
 
