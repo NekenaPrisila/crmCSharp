@@ -7,8 +7,27 @@
 <h1 class="display-4">Gestion des Tickets</h1>
 
 <div class="mt-4">
+    <!-- Contrôles de pagination en haut -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="dataTables_length">
+                <label>
+                    Afficher 
+                    <select id="pageSizeSelect" class="form-select form-select-sm d-inline-block w-auto">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select> entrées
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <div id="paginationInfo" class="dataTables_info"></div>
+        </div>
+    </div>
     
-    <table class="table table-striped">
+    <table id="ticketsTable" class="table table-striped">
         <thead>
             <tr>
                 <th>ID</th>
@@ -32,7 +51,7 @@
                     <td>@ticket.Customer</td>
                     <td>@ticket.AssignedEmployee</td>
                     <td>
-                        <span class="expense-value">@ticket.Expense</span>
+                        <span class="expense-value">@ticket.Expense.ToString("0.00")</span>
                         <form class="expense-form" style="display: none;" onsubmit="updateExpense(event, @ticket.Id, 'ticket')">
                             <input type="number" step="0.01" class="form-control expense-input" 
                                 value="@ticket.Expense.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
@@ -41,16 +60,13 @@
                         </form>
                     </td>
                     <td>
-                        <!-- Bouton Modifier -->
                         <button class="btn btn-outline-warning btn-sm me-2" onclick="toggleEditForm(event)" title="Modifier">
                             <i class="fas fa-edit"></i> Modifier
                         </button>
-                        
-                        <!-- Bouton Supprimer -->
                         <a href="@Url.Action("DeleteTicket", "Dashboard", new { id = ticket.Id })" 
-                        class="btn btn-outline-danger btn-sm" 
-                        title="Supprimer"
-                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?');">
+                           class="btn btn-outline-danger btn-sm" 
+                           title="Supprimer"
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?');">
                             <i class="fas fa-trash-alt"></i> Supprimer
                         </a>
                     </td>
@@ -58,59 +74,167 @@
             }
         </tbody>
     </table>
+
+    <!-- Pagination en bas -->
+    <div class="row">
+        <div class="col-md-12">
+            <div id="paginationControls" class="dataTables_paginate paging_simple_numbers">
+                <ul class="pagination justify-content-center">
+                    <!-- Boutons générés par jQuery -->
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script>
-    // Fonction pour afficher/masquer le formulaire d'édition
-    function toggleEditForm(event) {
-        event.preventDefault();
-        const row = event.target.closest('tr');
-        const expenseValue = row.querySelector('.expense-value');
-        const expenseForm = row.querySelector('.expense-form');
-
-        expenseValue.style.display = 'none';
-        expenseForm.style.display = 'block';
-    }
-
-    // Fonction pour annuler l'édition
-    function cancelEdit(event) {
-        event.preventDefault();
-        const row = event.target.closest('tr');
-        const expenseValue = row.querySelector('.expense-value');
-        const expenseForm = row.querySelector('.expense-form');
-
-        expenseValue.style.display = 'inline';
-        expenseForm.style.display = 'none';
-    }
-
-    // Fonction pour mettre à jour l'expense via AJAX
-    async function updateExpense(event, id, type) {
-        event.preventDefault();
-        const form = event.target;
-        const expenseInput = form.querySelector('.expense-input');
-        const newExpense = expenseInput.value;
-
-        try {
-            const response = await fetch(`/Dashboard/Update${type}Expense`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id, expense: newExpense }),
-            });
-
-            if (response.ok) {
-                const row = form.closest('tr');
-                const expenseValue = row.querySelector('.expense-value');
-                expenseValue.textContent = newExpense;
-                cancelEdit(event);
-                // Rafraîchir la page pour mettre à jour les totaux
-                window.location.reload();
-            } else {
-                alert('Erreur lors de la mise à jour.');
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Configuration de la pagination
+            var table = $('#ticketsTable');
+            var itemsPerPage = 10;
+            var currentPage = 1;
+            var rows = table.find('tbody tr');
+            var rowsCount = rows.length;
+            
+            // Initialisation
+            function initPagination() {
+                $('#pageSizeSelect').val(itemsPerPage).change(function() {
+                    itemsPerPage = parseInt($(this).val());
+                    currentPage = 1;
+                    updatePagination();
+                });
+                
+                updatePagination();
             }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
+            
+            // Afficher les lignes de la page courante
+            function showPage(page) {
+                var startIndex = (page - 1) * itemsPerPage;
+                var endIndex = startIndex + itemsPerPage;
+                
+                rows.hide();
+                rows.slice(startIndex, endIndex).show();
+                updatePaginationInfo();
+            }
+            
+            // Mettre à jour les contrôles de pagination
+            function updatePagination() {
+                var pageCount = Math.ceil(rowsCount / itemsPerPage);
+                var paginationControls = $('#paginationControls ul');
+                
+                paginationControls.empty();
+                
+                // Bouton Précédent
+                paginationControls.append(
+                    `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}">Précédent</a>
+                    </li>`
+                );
+                
+                // Boutons des pages
+                for (var i = 1; i <= pageCount; i++) {
+                    paginationControls.append(
+                        `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>`
+                    );
+                }
+                
+                // Bouton Suivant
+                paginationControls.append(
+                    `<li class="page-item ${currentPage === pageCount ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}">Suivant</a>
+                    </li>`
+                );
+                
+                showPage(currentPage);
+            }
+            
+            // Mettre à jour les infos de pagination
+            function updatePaginationInfo() {
+                var startItem = ((currentPage - 1) * itemsPerPage) + 1;
+                var endItem = Math.min(currentPage * itemsPerPage, rowsCount);
+                
+                $('#paginationInfo').text(
+                    `Affichage de ${startItem} à ${endItem} sur ${rowsCount} entrées`
+                );
+            }
+            
+            // Gestion des clics sur la pagination
+            $('#paginationControls').on('click', 'a.page-link', function(e) {
+                e.preventDefault();
+                currentPage = parseInt($(this).data('page'));
+                updatePagination();
+            });
+            
+            // Initialisation
+            initPagination();
+            
+            // Fonctions existantes adaptées pour jQuery
+            window.toggleEditForm = function(event) {
+                event.preventDefault();
+                const row = $(event.target).closest('tr');
+                const expenseValue = row.find('.expense-value');
+                const expenseForm = row.find('.expense-form');
+
+                expenseValue.hide();
+                expenseForm.show();
+            };
+
+            window.cancelEdit = function(event) {
+                event.preventDefault();
+                const row = $(event.target).closest('tr');
+                const expenseValue = row.find('.expense-value');
+                const expenseForm = row.find('.expense-form');
+
+                expenseValue.show();
+                expenseForm.hide();
+            };
+
+            window.updateExpense = async function(event, id, type) {
+                event.preventDefault();
+                const form = $(event.target);
+                const expenseInput = form.find('.expense-input');
+                const newExpense = parseFloat(expenseInput.val()).toFixed(2);
+
+                try {
+                    const response = await fetch(`/Dashboard/Update${type}Expense`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ id, expense: newExpense }),
+                    });
+
+                    if (response.ok) {
+                        const row = form.closest('tr');
+                        const expenseValue = row.find('.expense-value');
+                        expenseValue.text(newExpense);
+                        cancelEdit(event);
+                        window.location.reload();
+                    } else {
+                        alert('Erreur lors de la mise à jour.');
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                }
+            };
+        });
+    </script>
+}
+
+<style>
+    /* Styles identiques à ceux des leads */
+    .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
     }
-</script>
+    .page-link {
+        color: #0d6efd;
+    }
+    .dataTables_info {
+        padding-top: 0.5rem;
+    }
+</style>
