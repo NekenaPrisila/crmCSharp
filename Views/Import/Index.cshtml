@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Importation Clients";
+}
+
+<div class="container">
+    <h2>Importation de clients</h2>
+    
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <form method="post" enctype="multipart/form-data" asp-action="JsonImport" style="max-width: 500px;">
+        <div class="form-group">
+            <label for="jsonFile">Fichier JSON Customer:</label>
+            <input type="file" id="jsonFile" name="fileCustomerJson" class="form-control" accept=".json" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-upload"></i> Importer
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

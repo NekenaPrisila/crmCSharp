@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.Features;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Enregistrer le service HttpClient
@@ -10,6 +12,11 @@ builder.Services.AddScoped<LeadService>();
 builder.Services.AddScoped<CustomerService>();
 
 builder.Services.AddScoped<LoginService>();
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 100_000_000; // 100 Mo
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
